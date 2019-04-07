@@ -101,11 +101,17 @@ def rpnEvaluate(stack, element):
 
     return stack
 
-def formatSolution(sequence, target):
+def formatSolution(sequence, target, ignoreMultiplyByOne=True):
     '''Format a solution sequence using infix notation'''
     calcStack = []
     outputStack = []
     for element in sequence:
+        if ignoreMultiplyByOne and len(calcStack) > 0 and calcStack[-1] == 1 and element in ['*', '/']:
+            print('Ignoring multiply/divide by 1')
+            calcStack.pop()
+            outputStack.pop()
+            continue
+
         rpnEvaluate(calcStack, element)
         if type(element) is int:
             outputStack.append(str(element))
@@ -144,6 +150,7 @@ if __name__=='__main__':
     parser.add_argument('--numbers', '-n', nargs=6, type=int, help='Specify the 6 numbers')
     parser.add_argument('--target', '-t', type=int, help='Specify the target')
     parser.add_argument('--limit', '-l', type=float, default=30, help='Time limit in seconds')
+    parser.add_argument('--sequence', '-s', nargs=11, help='Solution sequence to print (for debugging)')
     args = parser.parse_args()
 
     if args.numbers is None:
@@ -154,6 +161,17 @@ if __name__=='__main__':
 
     print('\nNumbers: {}'.format(', '.join([str(el) for el in args.numbers])))
     print('Target: {}'.format(args.target))
+
+    if args.sequence:
+        sequence = []
+        for element in args.sequence:
+            if element.isnumeric():
+                sequence.append(int(element))
+            else:
+                sequence.append(element)
+        print('Sequence: {}'.format(sequence))
+        formattedSolution, numbersUsed = formatSolution(sequence, args.target)
+        import sys; sys.exit(0)
 
     startTime = time.time()
     solutionAttempts = 0

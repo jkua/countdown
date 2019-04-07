@@ -107,11 +107,17 @@ def formatSolution(sequence, target, ignoreMultiplyByOne=True):
     calcStack = []
     outputStack = []
     for element in sequence:
-        if ignoreMultiplyByOne and len(calcStack) > 0 and calcStack[-1] == 1 and element in ['*', '/']:
-            print('Ignoring multiply/divide by 1')
-            calcStack.pop()
-            outputStack.pop()
-            continue
+        if ignoreMultiplyByOne:
+            if len(calcStack) >= 1 and (element in ['*', '/'] and calcStack[-1] == 1): 
+                calcStack.pop()
+                outputStack.pop()
+                print('Ignoring multiply/divide by 1')
+                continue
+            elif len(calcStack) >= 2 and element == '*' and calcStack[-2] == 1:
+                calcStack.pop(-2)
+                outputStack.pop(-2)
+                print('Ignoring multiply/divide by 1')
+                continue
 
         rpnEvaluate(calcStack, element)
         if type(element) is int:
@@ -169,7 +175,10 @@ if __name__=='__main__':
             if element.isnumeric():
                 sequence.append(int(element))
             else:
-                sequence.append(element)
+                if element in ['+', '-', '*', '/']:
+                    sequence.append(element)
+                else:
+                    raise ValueError('Invalid sequence element! {}'.format(element))
         print('Sequence: {}'.format(sequence))
         formattedSolution, numbersUsed = formatSolution(sequence, args.target)
         import sys; sys.exit(0)

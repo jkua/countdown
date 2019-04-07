@@ -71,6 +71,7 @@ def generateRandomSequence(numbersIn):
             interimResults.append(stack[-1])
         # print('Next: {}'.format(sequence[-1]))
 
+    sequence = tuple(sequence)
     return sequence, interimResults
 
 def rpnEvaluate(stack, element):
@@ -176,14 +177,23 @@ if __name__=='__main__':
     startTime = time.time()
     solutionAttempts = 0
     closestSolution = None
+    testedSequences = set()
 
     # 30 second time limit, just like the show
     while time.time()-startTime < args.limit:
         print('\n{}: ****************'.format(solutionAttempts+1))
         sequence, interimResults = generateRandomSequence(args.numbers)
+        
         print('Sequence: {}'.format(sequence))
         print('Results: {}'.format(interimResults))
         solutionAttempts += 1
+        
+        if sequence in testedSequences:
+            print('*** Already tested!')
+            continue
+        else:
+            testedSequences.add(sequence)
+
         for result in interimResults:
             if closestSolution is None:
                 closestSolution = (result, sequence)
@@ -202,4 +212,4 @@ if __name__=='__main__':
         args.target, sequence = closestSolution
     print('Sequence: {}'.format(sequence))
     formattedSolution, numbersUsed = formatSolution(sequence, args.target)
-    print('Elapsed time: {:.6f}, attempts: {}, attempt rate: {:.1f}'.format(elapsedTime, solutionAttempts, solutionAttempts/elapsedTime))
+    print('Elapsed time: {:.6f}s, attempts: {} ({} unique), attempt rate: {:.1f} attempts/sec'.format(elapsedTime, solutionAttempts, len(testedSequences), solutionAttempts/elapsedTime))

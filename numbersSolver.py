@@ -108,7 +108,7 @@ def formatSolution(sequence, target, ignoreMultiplyByOne=True):
     outputStack = []
     for element in sequence:
         if ignoreMultiplyByOne:
-            if len(calcStack) >= 1 and (element in ['*', '/'] and calcStack[-1] == 1): 
+            if len(calcStack) >= 1 and (element in ['*', '/'] and calcStack[-1] == 1):
                 calcStack.pop()
                 outputStack.pop()
                 print('Ignoring multiply/divide by 1')
@@ -154,6 +154,7 @@ def formatSolution(sequence, target, ignoreMultiplyByOne=True):
 if __name__=='__main__':
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('--bigs', '-b', type=int, choices=[0, 1, 2, 3, 4], default=2, help='Number of big tiles (0-4)')
     parser.add_argument('--numbers', '-n', nargs=6, type=int, help='Specify the 6 numbers')
     parser.add_argument('--target', '-t', type=int, help='Specify the target')
     parser.add_argument('--limit', '-l', type=float, default=30, help='Time limit in seconds')
@@ -161,7 +162,7 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     if args.numbers is None:
-        args.numbers = generateNumbers(2)
+        args.numbers = generateNumbers(args.bigs)
 
     if args.target is None:
         args.target = generateTarget()
